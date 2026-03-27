@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Ease Chat · AI Mental Health Support</title>
+    <!-- Font Awesome 6 for icons (home, logout, etc) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(145deg, #eaf3f9 0%, #ddebf4 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            font-size: 14px;
+            color: #1e2f3e;
+        }
+
+        /* main chat card */
+        .chat-card {
+            max-width: 750px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 50px -18px #1f4e6e;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        /* header with buttons */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 2rem;
+            background: rgba(255,255,255,0.6);
+            border-bottom: 1px solid #d6e8f2;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-icon {
+            background: #2b6e4f;
+            width: 40px;
+            height: 40px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .logo-text {
+            font-weight: 650;
+            font-size: 1.2rem;
+            color: #15455f;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .nav-btn {
+            background: #ecf5fa;
+            border: 1px solid #c7ddec;
+            border-radius: 40px;
+            padding: 0.5rem 1.3rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #1b4f6e;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.2s;
+        }
+
+        .nav-btn i {
+            color: #2b6e4f;
+            font-size: 0.95rem;
+        }
+
+        .nav-btn:hover {
+            background: #d5e9f7;
+            border-color: #9bbeda;
+        }
+
+        /* main chat container */
+        .chat-container {
+            padding: 2rem 2rem 1.8rem 2rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #103e58;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        h2 i {
+            color: #2b6e4f;
+            font-size: 1.8rem;
+        }
+
+        .sub {
+            font-size: 0.9rem;
+            color: #4f758b;
+            margin-bottom: 1.8rem;
+            border-left: 4px solid #8fc5e0;
+            padding-left: 1.2rem;
+            background: #ecf6fd;
+            border-radius: 0 20px 20px 0;
+            padding: 0.6rem 1.2rem;
+        }
+
+        /* chat box — scrollable */
+        #chatbox {
+            height: 340px;
+            overflow-y: auto;
+            background: #f9feff;
+            border-radius: 28px;
+            padding: 1.5rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #cde0ec;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        /* message bubbles */
+        .user, .bot {
+            max-width: 80%;
+            padding: 0.7rem 1.2rem;
+            border-radius: 24px;
+            line-height: 1.5;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+
+        .user {
+            background: #e1f0fa;
+            align-self: flex-end;
+            color: #0a3144;
+            border-bottom-right-radius: 6px;
+            border: 1px solid #bdd8ed;
+        }
+
+        .bot {
+            background: white;
+            align-self: flex-start;
+            color: #15455f;
+            border-bottom-left-radius: 6px;
+            border: 1px solid #d4e6f2;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .bot b, .user b {
+            font-weight: 650;
+            color: #1b4f6e;
+        }
+
+        .user b {
+            color: #1a5777;
+        }
+
+        /* emotion tag styling */
+        .emotion-tag {
+            display: inline-block;
+            background: #2b6e4f20;
+            color: #1f5b40;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            border: 1px solid #2b6e4f40;
+        }
+
+        .confidence-badge {
+            display: inline-block;
+            background: #e9f3fa;
+            color: #2b506e;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
+            border: 1px solid #bdd8ed;
+        }
+
+        /* tip section */
+        .tip-box {
+            background: #f0f9f0;
+            border-left: 4px solid #2b6e4f;
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px;
+            margin: 0.8rem 0;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .tip-box i {
+            color: #2b6e4f;
+            font-size: 1.2rem;
+        }
+
+        .tip-content {
+            flex: 1;
+        }
+
+        .video-link {
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            color: #2b6e4f;
+            text-decoration: none;
+            border: 1px solid #2b6e4f40;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .video-link:hover {
+            background: #2b6e4f;
+            color: white;
+        }
+
+        /* input row */
+        .input-row {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            background: white;
+            border: 1.5px solid #cde0ec;
+            border-radius: 60px;
+            padding: 0.3rem 0.3rem 0.3rem 1.5rem;
+            transition: 0.15s;
+        }
+
+        .input-row:focus-within {
+            border-color: #5fa3c7;
+            box-shadow: 0 0 0 4px rgba(70, 140, 180, 0.15);
+        }
+
+        #message {
+            flex: 1;
+            border: none;
+            padding: 0.8rem 0;
+            font-size: 0.95rem;
+            background: transparent;
+            outline: none;
+            color: #1e3b4f;
+        }
+
+        #message::placeholder {
+            color: #95b3c9;
+            font-weight: 300;
+        }
+
+        .send-btn {
+            background: #2b6e4f;
+            border: none;
+            color: white;
+            border-radius: 60px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 6px 14px rgba(33, 110, 80, 0.3);
+            font-size: 1.2rem;
+        }
+
+        .send-btn:hover {
+            background: #1f5b40;
+            transform: scale(1.02);
+        }
+
+        /* mood tracker mini (just a visual note) */
+        .mood-footnote {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #4b758b;
+            background: #e9f3fa;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+        }
+
+        .mood-footnote i {
+            color: #2b6e4f;
+        }
+
+        /* accuracy badge */
+        .accuracy-badge {
+            background: #2b6e4f15;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: #1e5a45;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid #2b6e4f30;
+        }
+
+        /* conversation log for debugging (hidden by default) */
+        .debug-section {
+            margin-top: 1rem;
+            background: #f0f5fa;
+            border-radius: 20px;
+            padding: 1rem;
+            border: 1px solid #d4e6f2;
+        }
+
+        .debug-toggle {
+            color: #5f7486;
+            cursor: pointer;
+            font-size: 0.8rem;
+            user-select: none;
+        }
+
+        .debug-log {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        .debug-log.show {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            padding: 0.5rem;
+            border-bottom: 1px solid #d4e6f2;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .log-emotion {
+            font-weight: 600;
+            color: #2b6e4f;
+            min-width: 80px;
+        }
+
+        .log-confidence {
+            color: #5f7486;
+            min-width: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-card">
+        <!-- header with home & logout buttons (exactly as requested) -->
+        <div class="chat-header">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-brain"></i></div>
+                <span class="logo-text">Mind Ease Chat</span>
+            </div>
+            <div class="header-buttons">
+                <a href="/" class="nav-btn"><i class="fas fa-home"></i> home</a>
+                <a href="/dashboard" class="nav-btn"><i class="fas fa-chart-pie"></i> dashboard</a>
+                <a href="/logout" class="nav-btn"><i class="fas fa-sign-out-alt"></i> logout</a>
+            </div>
+        </div>
+
+        <!-- main chat container (functionality unchanged) -->
+        <div class="chat-container">
+            <h2><i class="fas fa-comment-dots"></i> Mind Ease</h2>
+            
+
+            <!-- chat box (id unchanged) -->
+            <div id="chatbox">
+                <!-- updated welcome message -->
+                <p class="bot"><b>Mind Ease:</b> Hello! I am Mind Ease, your AI mental health support chatbot. How are you feeling today?</p>
+            </div>
+
+            <!-- input row -->
+            <div class="input-row">
+                <input type="text" id="message" placeholder="share how you're feeling..." autocomplete="off">
+                <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+
+            <!-- small mood tracker hint (keeps design theme) -->
+            <div class="mood-footnote">
+                <span><i class="fas fa-chart-simple"></i> weighted mood tracking active</span>
+               
+                <span><i class="fas fa-lock" style="opacity: 0.6;"></i> encrypted</span>
+            </div>
+
+        </div>
+    </div>
+<script>
+    function sendMessage() {
+        let msgInput = document.getElementById("message");
+        let msg = msgInput.value.trim();
+        if (!msg) return;
+
+        let chatbox = document.getElementById("chatbox");
+
+        // Add user message
+        let userMsg = document.createElement("p");
+        userMsg.className = "user";
+        userMsg.innerHTML = "<b>You:</b> " + escapeHtml(msg);
+        chatbox.appendChild(userMsg);
+
+        msgInput.value = "";
+
+        // Add loading message
+        let loadingMsg = document.createElement("p");
+        loadingMsg.className = "bot";
+        loadingMsg.id = "loadingMsg";
+        loadingMsg.innerHTML = "<b>Mind Ease:</b> Typing...";
+        chatbox.appendChild(loadingMsg);
+
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+        fetch("/chat", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: "message=" + encodeURIComponent(msg)
+        })
+        .then(async res => {
+            let text = await res.text();
+            console.log("RAW RESPONSE:", text);
+
+            let loading = document.getElementById("loadingMsg");
+            if (loading) loading.remove();
+
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (err) {
+                throw new Error("Invalid JSON response from server: " + text);
+            }
+
+            if (data.error) {
+                throw new Error(data.error);
+            }
+
+            // Emotion message
+            let emotionMsg = document.createElement("p");
+            emotionMsg.className = "bot";
+            emotionMsg.innerHTML = `<b>Detected Emotion:</b> ${escapeHtml(data.emotion || "unknown")}
+                ${data.confidence !== undefined ? `<span class='confidence-badge'>${(data.confidence * 100).toFixed(1)}% confidence</span>` : ""}`;
+            chatbox.appendChild(emotionMsg);
+
+            // Bot reply
+            let botMsg = document.createElement("p");
+            botMsg.className = "bot";
+            botMsg.innerHTML = "<b>Mind Ease:</b> " + escapeHtml(data.response || "No response received.");
+            chatbox.appendChild(botMsg);
+
+            // Tip
+            if (data.tip) {
+                let tipBox = document.createElement("div");
+                tipBox.className = "tip-box";
+
+                let videoLink = data.video
+                    ? `<a href="${data.video}" target="_blank" class="video-link">
+                            <i class="fas fa-play"></i> guided exercise
+                       </a>`
+                    : "";
+
+                tipBox.innerHTML = `
+                    <i class="fas fa-lightbulb"></i>
+                    <div class="tip-content">
+                        <strong>Self-care tip:</strong> ${escapeHtml(data.tip)}
+                    </div>
+                    ${videoLink}
+                `;
+                chatbox.appendChild(tipBox);
+            }
+
+            chatbox.scrollTop = chatbox.scrollHeight;
+        })
+        .catch(err => {
+            console.error("FETCH ERROR:", err);
+
+            let loading = document.getElementById("loadingMsg");
+            if (loading) loading.remove();
+
+            let errMsg = document.createElement("p");
+            errMsg.className = "bot";
+            errMsg.innerHTML = "<b>Mind Ease:</b> Error: " + escapeHtml(err.message);
+            chatbox.appendChild(errMsg);
+
+            chatbox.scrollTop = chatbox.scrollHeight;
+        });
+    }
+
+    function escapeHtml(unsafe) {
+        return String(unsafe)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    document.getElementById("message").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+            sendMessage();
+        }
+    });
+</script>
+</body>
+</html>

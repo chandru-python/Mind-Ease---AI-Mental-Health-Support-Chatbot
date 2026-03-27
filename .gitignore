@@ -1,0 +1,15 @@
+glove.6B.100d.txt
+users.db
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.h5
+*.keras
+*.pkl
+venv/
+.venv/
+.idea/
+.vscode/

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Mood Click Trends (Weekly to Daily Bars)</title>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(145deg, #eaf3fa 0%, #d9eaf5 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            font-size: 14px;
+            color: #1a4055;
+        }
+        .dashboard-card {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            border-radius: 2.8rem;
+            box-shadow: 0 30px 60px -20px #1f4f70;
+            border: 1px solid rgba(255,255,255,0.5);
+            padding: 2rem 2.2rem 2.5rem;
+        }
+        .dash-header {
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .title-section {
+            display: flex; align-items: center; gap: 1rem;
+        }
+        .title-section i {
+            font-size: 2.2rem; color: #2b6e4f; background: #e1f0e9;
+            padding: 0.7rem; border-radius: 20px;
+        }
+        .title-section h2 { font-size: 2rem; font-weight: 650; color: #0f3a51; }
+        .nav-btn {
+            background: #ecf5fa; border: 1px solid #c7ddec; border-radius: 40px;
+            padding: 0.6rem 1.5rem; font-weight: 500; color: #1b4f6e;
+            text-decoration: none; display: inline-flex; align-items: center; gap: 0.6rem;
+        }
+        .nav-btn i { color: #2b6e4f; }
+
+        /* date row */
+        .date-panel {
+            background: #e1f1e9; border-radius: 2rem; padding: 1.2rem 2rem;
+            display: flex; align-items: center; flex-wrap: wrap; gap: 2rem;
+            margin-bottom: 2rem; border: 1px solid #b7decb;
+        }
+        #datePicker {
+            background: white; border: 1.5px solid #b6d3e8; padding: 0.6rem 1.2rem;
+            border-radius: 40px; font-size: 1rem; outline: none;
+        }
+        .selected-mood-box {
+            background: #fefdf2; border-radius: 40px; padding: 0.5rem 1.8rem;
+            border: 1px solid #c7b26f; font-weight: 600;
+        }
+
+        /* colour calendar */
+        .calendar-wrapper {
+            background: #f2f9ff; border-radius: 2rem; padding: 1.8rem;
+            margin-bottom: 2rem; border: 1px solid #cae0ee;
+        }
+        .cal-header {
+            display: flex; justify-content: space-between; margin-bottom: 1rem;
+            font-weight: 600; color: #1d627e;
+        }
+        .cal-grid {
+            display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem;
+        }
+        .day {
+            background: white; padding: 0.9rem 0.2rem; text-align: center;
+            border-radius: 30px; font-weight: 500; border: 1px solid #cde0ec;
+            cursor: pointer; transition: 0.1s;
+        }
+        .day.selected {
+            border: 3px solid #1e4f6e; background: #fff7e0; font-weight: 700;
+        }
+        .day.mood-happy { background: #b0e9c2; border-color: #2b6e4f; color: #1a4a2f; font-weight: 600; }
+        .day.mood-sad { background: #a9d6f5; border-color: #2c5e8c; color: #113750; }
+        .day.mood-anger { background: #fbb5b5; border-color: #b13e33; color: #581e1e; }
+        .day.mood-anxiety { background: #ffe48f; border-color: #c4a124; color: #5f4f1a; }
+        .day.mood-neutral { background: #d9e2ec; border-color: #5d7a94; color: #2f4b62; }
+        .day.empty { background: #eef3f7; border: 1px dashed #b8cfdf; cursor: default; opacity: 0.8; }
+
+        /* mood buttons */
+        .mood-section {
+            background: #f1f8fe; border-radius: 2rem; padding: 1.6rem 2rem;
+            margin-bottom: 2rem; border: 1px solid #cee4f2;
+        }
+        .mood-buttons {
+            display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center;
+        }
+        .mood-btn {
+            border: none; padding: 0.7rem 1.6rem; border-radius: 60px;
+            font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem;
+            cursor: pointer; border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .mood-btn.happy { background: #b0e9c2; color: #1a5336; }
+        .mood-btn.sad { background: #a9d6f5; color: #1d4c73; }
+        .mood-btn.anger { background: #fbb5b5; color: #7b2e2e; }
+        .mood-btn.anxiety { background: #ffe48f; color: #735f20; }
+        .mood-btn.neutral { background: #d9e2ec; color: #334e68; }
+
+        .feedback-area {
+            background: #eef6f2; border-radius: 2rem; padding: 1.2rem 2rem;
+            margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;
+            border: 1px solid #bde0d3;
+        }
+
+        /* week selector buttons (week1..4) */
+        .week-selector {
+            display: flex; gap: 1rem; flex-wrap: wrap; margin: 1.5rem 0 1rem;
+            justify-content: center;
+        }
+        .week-btn {
+            background: #e7f0f9; border: 2px solid #b0cde0; border-radius: 40px;
+            padding: 0.6rem 2rem; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: 0.1s; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .week-btn.active {
+            background: #2b6e4f; border-color: #1f4f3a; color: white;
+        }
+
+        /* chart duo: monthly pie (left) + weekly daily bars (right) */
+        .chart-duo {
+            display: flex; gap: 2rem; flex-wrap: wrap; margin: 2rem 0;
+        }
+        .chart-box {
+            flex: 1 1 400px; background: white; padding: 1.5rem;
+            border-radius: 2rem; border: 1px solid #d1e3f0;
+        }
+        .chart-box h4 { font-size: 1.2rem; margin-bottom: 1rem; color: #134257; display: flex; gap: 0.5rem; }
+
+        /* table */
+        .table-wrap {
+            max-height: 240px; overflow-y: auto; border-radius: 1.5rem;
+            border: 1px solid #d1e3f0; background: white; margin: 1rem 0 2rem;
+        }
+        #moodTable {
+            width: 100%; border-collapse: collapse; font-size: 0.9rem;
+        }
+        #moodTable th {
+            background: #e1f0e9; color: #1d4f3a; padding: 0.6rem; text-align: left;
+            position: sticky; top: 0;
+        }
+        #moodTable td { padding: 0.5rem; border-bottom: 1px solid #cde0ec; }
+
+        .back-btn a button {
+            background: #2b6e4f; border: none; color: white; padding: 0.8rem 2.2rem;
+            border-radius: 60px; font-weight: 600; cursor: pointer;
+        }
+        .back-btn a button:hover { background: #1f5b40; }
+    </style>
+</head>
+<body>
+<div class="dashboard-card">
+    <!-- header -->
+    <div class="dash-header">
+        <div class="title-section">
+            <i class="fas fa-chart-line"></i>
+            <h2>Mood Tracker → daily bars</h2>
+        </div>
+        <div class="header-buttons">
+            <a href="/" class="nav-btn"><i class="fas fa-home"></i> home</a>
+            <a href="/chatbot" class="nav-btn"><i class="fas fa-comment-dots"></i> chat</a>
+        </div>
+    </div>
+
+    <!-- date picker + depiction -->
+    <div class="date-panel">
+        <i class="fas fa-calendar-day fa-fw"></i>
+        <input type="date" id="datePicker" class="date-picker">
+        <div class="selected-mood-box" id="selectedMoodDisplay">
+            <i class="far fa-face-smile"></i> pick a date
+        </div>
+    </div>
+
+    <!-- colour calendar (happy green, anger red, etc.) -->
+    <div class="calendar-wrapper">
+        <div class="cal-header">
+            <span><i class="fas fa-calendar-alt"></i> <span id="currentMonthYear"></span></span>
+            <span><i class="fas fa-palette"></i> happy·green &nbsp; sad·blue &nbsp; anger·red &nbsp; anxiety·yellow &nbsp; neutral·grey</span>
+        </div>
+        <div id="calendarGrid" class="cal-grid"></div>
+    </div>
+
+    <!-- mood entry -->
+    <div class="mood-section">
+        <div class="mood-buttons">
+            <button class="mood-btn happy" onclick="markMood('happy')"><i class="far fa-smile"></i> Happy</button>
+            <button class="mood-btn sad" onclick="markMood('sad')"><i class="far fa-frown"></i> Sad</button>
+            <button class="mood-btn anger" onclick="markMood('anger')"><i class="fas fa-angry"></i> Anger</button>
+            <button class="mood-btn anxiety" onclick="markMood('anxiety')"><i class="fas fa-brain"></i> Anxiety</button>
+            <button class="mood-btn neutral" onclick="markMood('neutral')"><i class="far fa-meh"></i> Neutral</button>
+        </div>
+    </div>
+
+    <!-- feedback -->
+    <div class="feedback-area">
+        <div id="message"><i class="fas fa-spa"></i> click date → choose mood</div>
+    </div>
+
+    <!-- week 1 2 3 4 buttons -->
+    <div class="week-selector" id="weekSelector">
+        <button class="week-btn active" data-week="1">week 1 (days 1‑7)</button>
+        <button class="week-btn" data-week="2">week 2 (days 8‑14)</button>
+        <button class="week-btn" data-week="3">week 3 (days 15‑21)</button>
+        <button class="week-btn" data-week="4">week 4 (days 22‑28)</button>
+        <button class="week-btn" data-week="5">week 5 (29+)</button>
+    </div>
+
+    <!-- charts: monthly pie (left) + weekly daily bar (right) -->
+    <div class="chart-duo">
+        <!-- monthly pie chart (how much anger/happy etc) -->
+        <div class="chart-box">
+            <h4><i class="fas fa-chart-pie"></i> monthly mood pie</h4>
+            <canvas id="monthlyPieChart"></canvas>
+            <p style="text-align:center; margin-top:0.5rem;" id="monthlyPieSummary"></p>
+        </div>
+        <!-- weekly daily bar chart (day1..7 mood counts) -->
+        <div class="chart-box">
+            <h4><i class="fas fa-chart-bar"></i> <span id="weekLabel">week 1</span> — mood per day</h4>
+            <canvas id="weeklyDailyBarChart"></canvas>
+            <p style="text-align:center; margin-top:0.5rem;" id="weeklyDailySummary"></p>
+        </div>
+    </div>
+
+    <!-- history table -->
+    <h3><i class="fas fa-timeline"></i> recent entries</h3>
+    <div class="table-wrap">
+        <table id="moodTable">
+            <thead><tr><th>Date</th><th>Mood</th></tr></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- back -->
+    <div class="back-btn">
+        <a href="/chatbot"><button><i class="fas fa-comment-dots"></i> continue</button></a>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- REAL-TIME MOOD DATA (date -> mood) ----------
+        const today = new Date();
+        const y = today.getFullYear();
+        const m = String(today.getMonth() + 1).padStart(2,'0');
+        const d = String(today.getDate()).padStart(2,'0');
+        const TODAY = `${y}-${m}-${d}`;
+
+        // sample entries – you can see colours on calendar
+        let moodDB = new Map([
+            [`${y}-${m}-01`, 'happy'],
+            [`${y}-${m}-02`, 'sad'],
+            [`${y}-${m}-03`, 'anxiety'],
+            [`${y}-${m}-04`, 'anger'],
+            [`${y}-${m}-05`, 'neutral'],
+            [`${y}-${m}-06`, 'happy'],
+            [`${y}-${m}-07`, 'happy'],
+            [`${y}-${m}-08`, 'sad'],
+            [`${y}-${m}-09`, 'anger'],
+            [`${y}-${m}-10`, 'anxiety'],
+            [`${y}-${m}-11`, 'neutral'],
+            [`${y}-${m}-12`, 'happy'],
+            [`${y}-${m}-15`, 'anger'],
+            [`${y}-${m}-18`, 'happy'],
+            [`${y}-${m}-22`, 'neutral'],
+            [`${y}-${m}-25`, 'anxiety'],
+            [`${y}-${m}-28`, 'sad'],
+            [TODAY, 'happy']
+        ]);
+
+        // add few prev month for week 5 demo
+        const prevMonth = m === '01' ? 12 : parseInt(m)-1;
+        const prevMonthStr = prevMonth < 10 ? '0'+prevMonth : String(prevMonth);
+        moodDB.set(`${y}-${prevMonthStr}-30`, 'anger');
+        moodDB.set(`${y}-${prevMonthStr}-31`, 'happy');
+
+        // ---------- global ----------
+        const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        let selectedDate = TODAY;
+        let currentDisplayYear = y;
+        let currentDisplayMonth = today.getMonth(); // 0-11
+        let activeWeek = 1;          // default week 1
+
+        // DOM elements
+        const datePicker = document.getElementById('datePicker');
+        const selectedMoodDisplay = document.getElementById('selectedMoodDisplay');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const monthYearSpan = document.getElementById('currentMonthYear');
+        const messageDiv = document.getElementById('message');
+        const weekLabel = document.getElementById('weekLabel');
+
+        // ----- helper: mood class for calendar colour -----
+        function moodClass(mood) {
+            return mood ? 'mood-' + mood : '';
+        }
+
+        // ----- render calendar (colour per mood) -----
+        function renderCalendar() {
+            const year = currentDisplayYear;
+            const month = currentDisplayMonth;
+            const firstDay = new Date(year, month, 1).getDay(); // 0 = sunday
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            monthYearSpan.innerText = `${monthNames[month]} ${year}`;
+
+            let gridHtml = '';
+            for (let i = 0; i < firstDay; i++) {
+                gridHtml += `<div class="day empty"></div>`;
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const mood = moodDB.get(dateStr);
+                let classes = 'day';
+                if (dateStr === selectedDate) classes += ' selected';
+                if (mood) classes += ' ' + moodClass(mood);
+                gridHtml += `<div class="${classes}" data-date="${dateStr}">${d}</div>`;
+            }
+            calendarGrid.innerHTML = gridHtml;
+
+            document.querySelectorAll('.day[data-date]').forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const clickedDate = this.dataset.date;
+                    selectedDate = clickedDate;
+                    datePicker.value = clickedDate;
+                    document.querySelectorAll('.day').forEach(d => d.classList.remove('selected'));
+                    this.classList.add('selected');
+                    updateSelectedDisplay();
+                    updateAllChartsAndTable();
+                });
+            });
+        }
+
+        // update selected date display
+        function updateSelectedDisplay() {
+            const mood = moodDB.get(selectedDate);
+            if (mood) {
+                let icon = 'far fa-smile';
+                if (mood === 'happy') icon = 'far fa-smile';
+                else if (mood === 'sad') icon = 'far fa-frown';
+                else if (mood === 'anger') icon = 'fas fa-angry';
+                else if (mood === 'anxiety') icon = 'fas fa-brain';
+                else if (mood === 'neutral') icon = 'far fa-meh';
+                selectedMoodDisplay.innerHTML = `<i class="${icon}"></i> ${selectedDate} : <strong>${mood}</strong>`;
+            } else {
+                selectedMoodDisplay.innerHTML = `<i class="far fa-circle"></i> ${selectedDate} : no mood`;
+            }
+        }
+
+        // ----- MONTHLY PIE (emotion counts for current month) -----
+        function getMonthlyEmotionCounts() {
+            const year = currentDisplayYear;
+            const month = currentDisplayMonth;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+            const counts = { happy:0, sad:0, anger:0, anxiety:0, neutral:0 };
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const mood = moodDB.get(dateStr);
+                if (mood && counts.hasOwnProperty(mood)) counts[mood]++;
+            }
+            return counts;
+        }
+
+        // ----- WEEKLY DAILY (for selected week number: 1..5) -----
+        function getDailyMoodsForWeek(weekNum) {
+            // week boundaries based on currentDisplayYear / month
+            const year = currentDisplayYear;
+            const month = currentDisplayMonth;
+            const daysInMonth = new Date(year, month+1, 0).getDate();
+
+            let startDay, endDay;
+            if (weekNum === 1) { startDay = 1; endDay = 7; }
+            else if (weekNum === 2) { startDay = 8; endDay = 14; }
+            else if (weekNum === 3) { startDay = 15; endDay = 21; }
+            else if (weekNum === 4) { startDay = 22; endDay = 28; }
+            else { startDay = 29; endDay = daysInMonth; } // week 5
+
+            const dailyMoods = [];
+            for (let d = startDay; d <= endDay; d++) {
+                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const mood = moodDB.get(dateStr) || 'none';   // 'none' = no entry
+                dailyMoods.push({ day: d, mood: mood });
+            }
+            return dailyMoods;
+        }
+
+        // ----- charts -----
+        let monthlyPieChart, weeklyDailyBarChart;
+
+        function initCharts() {
+            const pieCtx = document.getElementById('monthlyPieChart').getContext('2d');
+            const barCtx = document.getElementById('weeklyDailyBarChart').getContext('2d');
+            if (monthlyPieChart) monthlyPieChart.destroy();
+            if (weeklyDailyBarChart) weeklyDailyBarChart.destroy();
+
+            monthlyPieChart = new Chart(pieCtx, {
+                type: 'pie',
+                data: { labels: ['happy','sad','anger','anxiety','neutral'], datasets: [{ data: [0,0,0,0,0], backgroundColor: ['#69db7c','#74c0fc','#ff6b6b','#ffd43b','#ced4da'] }] },
+                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+            });
+
+            weeklyDailyBarChart = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],  // will be day numbers
+                    datasets: [{
+                        label: 'mood',
+                        data: [],
+                        backgroundColor: [],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, stepSize: 1, title: { display: true, text: 'mood key: 1=happy,2=sad,3=anger,4=anxiety,5=neutral,0=none' } } },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => {
+                        const val = ctx.raw;
+                        const moodNames = {0:'none',1:'happy',2:'sad',3:'anger',4:'anxiety',5:'neutral'};
+                        return `day ${ctx.label}: ${moodNames[val] || 'unknown'}`;
+                    } } } }
+                }
+            });
+        }
+
+        // map mood name to numeric code for bar chart (and colour)
+        function moodToNumber(mood) {
+            if (mood === 'happy') return 1;
+            if (mood === 'sad') return 2;
+            if (mood === 'anger') return 3;
+            if (mood === 'anxiety') return 4;
+            if (mood === 'neutral') return 5;
+            return 0; // none
+        }
+
+        function moodToColor(mood) {
+            if (mood === 'happy') return '#69db7c';
+            if (mood === 'sad') return '#74c0fc';
+            if (mood === 'anger') return '#ff6b6b';
+            if (mood === 'anxiety') return '#ffd43b';
+            if (mood === 'neutral') return '#ced4da';
+            return '#e0e0e0'; // none
+        }
+
+        function updateAllChartsAndTable() {
+            // 1) monthly pie
+            const monthly = getMonthlyEmotionCounts();
+            const pieData = [monthly.happy, monthly.sad, monthly.anger, monthly.anxiety, monthly.neutral];
+            monthlyPieChart.data.datasets[0].data = pieData;
+            monthlyPieChart.update();
+            const totalMonthly = pieData.reduce((a,b)=>a+b,0);
+            document.getElementById('monthlyPieSummary').innerHTML = 
+                `😊${monthly.happy}  😟${monthly.sad}  😠${monthly.anger}  😰${monthly.anxiety}  😐${monthly.neutral}  total:${totalMonthly}`;
+
+            // 2) weekly daily bar based on activeWeek
+            const daily = getDailyMoodsForWeek(activeWeek);
+            const labels = daily.map(item => item.day);
+            const numericData = daily.map(item => moodToNumber(item.mood));
+            const bgColors = daily.map(item => moodToColor(item.mood));
+
+            weeklyDailyBarChart.data.labels = labels;
+            weeklyDailyBarChart.data.datasets[0].data = numericData;
+            weeklyDailyBarChart.data.datasets[0].backgroundColor = bgColors;
+            weeklyDailyBarChart.update();
+
+            const nonEmpty = daily.filter(d => d.mood !== 'none').length;
+            document.getElementById('weeklyDailySummary').innerText = `week ${activeWeek}: ${nonEmpty} days with mood`;
+
+            // 3) table
+            const allEntries = Array.from(moodDB.entries()).map(([date, mood]) => ({date, mood}));
+            allEntries.sort((a,b)=> new Date(b.date) - new Date(a.date));
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            allEntries.slice(0, 10).forEach(e => {
+                tbody.innerHTML += `<tr><td>${e.date}</td><td>${e.mood}</td></tr>`;
+            });
+        }
+
+        // ----- mark mood (real time) -----
+        window.markMood = function(emotion) {
+            if (!selectedDate) { alert('select a date'); return; }
+            moodDB.set(selectedDate, emotion);
+            messageDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#2b6e4f;"></i> ${emotion} saved for ${selectedDate}`;
+            renderCalendar();                // update colour on calendar
+            updateSelectedDisplay();
+            updateAllChartsAndTable();        // updates pie + weekly bar
+        };
+
+        // ----- week button handling -----
+        const weekButtons = document.querySelectorAll('.week-btn');
+        weekButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                weekButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                activeWeek = parseInt(this.dataset.week);
+                weekLabel.innerText = `week ${activeWeek}`;
+                updateAllChartsAndTable();
+            });
+        });
+
+        // ----- datePicker change -----
+        datePicker.value = selectedDate;
+        datePicker.addEventListener('change', function(e) {
+            selectedDate = e.target.value;
+            const parts = selectedDate.split('-');
+            if (parts.length === 3) {
+                currentDisplayYear = parseInt(parts[0]);
+                currentDisplayMonth = parseInt(parts[1]) - 1;
+            }
+            renderCalendar();
+            updateSelectedDisplay();
+            updateAllChartsAndTable();
+        });
+
+        // initialise everything
+        renderCalendar();
+        updateSelectedDisplay();
+        initCharts();
+        updateAllChartsAndTable();
+    })();
+</script>
+</body>
+</html>

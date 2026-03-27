@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Ease · Create Account</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* modern, soft reset — small base font (14px) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f0f5fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            font-size: 14px;               /* professional small base */
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* main card: split layout left (form) / right (image/quote) */
+        .split-card {
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -12px rgba(30, 50, 80, 0.18);
+            overflow: hidden;
+            transition: all 0.2s ease;
+            border: 1px solid #e9eef3;
+        }
+
+        /* left panel — form area */
+        .form-panel {
+            flex: 1.1;                       /* slightly more width for form */
+            padding: 2.5rem 2.8rem;
+            background: white;
+        }
+
+        /* right panel — serene mental health imagery + small quote */
+        .visual-panel {
+            flex: 0.9;
+            background: linear-gradient(145deg, #d4e6f1 0%, #bcd9e6 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.8rem;
+            position: relative;
+            text-align: center;
+            color: #1e3a5f;
+        }
+
+        /* subtle pattern overlay */
+        .visual-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.1"><path fill="%233b5e7a" d="M20 30 Q 40 10 60 30 T 100 30" stroke="none"/><circle cx="30" cy="70" r="8"/><circle cx="70" cy="70" r="8"/></svg>');
+            background-size: 120px 120px;
+            background-repeat: repeat;
+            pointer-events: none;
+        }
+
+        /* home button (top left inside form panel) */
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #eef2f6;
+            border: none;
+            border-radius: 40px;
+            padding: 0.5rem 1.2rem 0.5rem 1rem;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #2c4b6b;
+            margin-bottom: 1.8rem;
+            cursor: pointer;
+            transition: background 0.15s, box-shadow 0.15s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #dde5ed;
+        }
+
+        .home-btn i {
+            font-size: 0.9rem;
+            color: #2b6e4f;    /* calm green */
+        }
+
+        .home-btn:hover {
+            background: #e3eaf2;
+            border-color: #b8cdde;
+        }
+
+        /* logo + title */
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo-icon {
+            background: #e2f0e9;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2b6e4f;
+            font-size: 1.3rem;
+        }
+
+        h2 {
+            font-size: 1.8rem;      /* ~25px, balanced */
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #173e5c;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .subhead {
+            font-size: 0.9rem;
+            color: #546e7a;
+            margin-bottom: 1.8rem;
+            border-left: 3px solid #9fc5e0;
+            padding-left: 1rem;
+            background: #f6fafd;
+            border-radius: 0 8px 8px 0;
+            line-height: 1.4;
+        }
+
+        /* form fields — small but comfortable */
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            background: #f9fcff;
+            border: 1.5px solid #dce5ed;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+            color: #1e2f3e;
+        }
+
+        input:focus {
+            border-color: #5b9abf;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(74, 144, 180, 0.12);
+        }
+
+        input::placeholder {
+            color: #9aafc0;
+            font-size: 0.85rem;
+            font-weight: 300;
+        }
+
+        /* register button — soft gradient */
+        .register-btn {
+            width: 100%;
+            background: linear-gradient(105deg, #2b6e4f 0%, #388e76 100%);
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: 40px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            cursor: pointer;
+            margin: 1.8rem 0 1.2rem;
+            transition: 0.15s;
+            box-shadow: 0 6px 16px rgba(36, 113, 86, 0.2);
+            border: 1px solid rgba(255,255,255,0.2);
+            letter-spacing: 0.2px;
+        }
+
+        .register-btn:hover {
+            background: linear-gradient(105deg, #1f5b40 0%, #2d7b64 100%);
+            box-shadow: 0 8px 20px rgba(25, 90, 70, 0.25);
+            transform: scale(1.01);
+        }
+
+        /* flash message styling */
+        .alert {
+            padding: 0.75rem 1.2rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            margin-bottom: 1.5rem;
+            background: #ecf7f2;
+            color: #1f6d4c;
+            border: 1px solid #a0d3bc;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .alert.error {
+            background: #ffefef;
+            color: #a1443a;
+            border-color: #f3b5af;
+        }
+
+        /* login link small */
+        .login-link {
+            font-size: 0.85rem;
+            color: #5c6f82;
+            display: flex;
+            justify-content: center;
+            gap: 0.3rem;
+            margin-top: 1rem;
+        }
+
+        .login-link a {
+            color: #2b6e4f;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1.5px dotted #aac6d8;
+        }
+
+        .login-link a:hover {
+            color: #1a4f38;
+            border-bottom: 1.5px solid #2b6e4f;
+        }
+
+        .form-footer {
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #7a8f9f;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            border-top: 1px solid #e3eef5;
+            padding-top: 1rem;
+        }
+
+        /* --- right panel content (mental health imagery) --- */
+        .visual-panel i.fa-brain, .visual-panel i.fa-heart, .visual-panel i.fa-leaf {
+            filter: drop-shadow(0 4px 6px rgba(40, 70, 90, 0.15));
+        }
+
+        .mind-icon {
+            font-size: 4.5rem;
+            color: #2b4f6e;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .peace-quote {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(4px);
+            padding: 1.3rem 1.5rem;
+            border-radius: 32px;
+            font-size: 1rem;
+            font-weight: 450;
+            color: #103247;
+            max-width: 260px;
+            margin: 1.2rem 0;
+            box-shadow: 0 6px 14px rgba(64, 102, 130, 0.1);
+            border: 1px solid rgba(255,255,255,0.7);
+            line-height: 1.5;
+        }
+
+        .peace-quote i {
+            color: #567d9a;
+            margin: 0 4px;
+        }
+
+        .image-row {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+            align-items: center;
+            margin: 1.2rem 0 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .image-row .icon-bubble {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(4px);
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #2b4b68;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 6px 14px rgba(47, 83, 109, 0.1);
+        }
+
+        .support-note {
+            font-size: 0.8rem;
+            background: rgba(255,255,255,0.25);
+            padding: 0.6rem 1.4rem;
+            border-radius: 60px;
+            color: #163a4e;
+            border: 1px solid rgba(255,255,240,0.6);
+            margin-top: 1.5rem;
+        }
+
+        /* model accuracy badge */
+        .accuracy-badge {
+            background: rgba(43, 110, 79, 0.15);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: #1e5a45;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(43, 110, 79, 0.2);
+        }
+
+        /* responsive */
+        @media (max-width: 750px) {
+            .split-card {
+                flex-direction: column;
+                border-radius: 1.8rem;
+            }
+            .visual-panel {
+                padding: 2.5rem 1.5rem;
+            }
+            .form-panel {
+                padding: 2rem 1.8rem;
+            }
+        }
+
+        /* password strength indicator */
+        .password-strength {
+            height: 4px;
+            background: #e0e7ef;
+            border-radius: 4px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+
+        .strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 0.7rem;
+            margin-top: 4px;
+            color: #6b7f92;
+        }
+    </style>
+</head>
+<body>
+    <div class="split-card">
+        <!-- LEFT side: registration form (mental health context) -->
+        <div class="form-panel">
+            <!-- subtle home button with icon -->
+            <button class="home-btn" onclick="window.location.href='/';">
+                <i class="fas fa-arrow-left"></i> home
+            </button>
+
+            <!-- logo / mental health friendly -->
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-brain"></i></div>
+                <h2>Mind Ease</h2>
+            </div>
+            <div class="subhead">
+                <i class="fas fa-spa" style="margin-right: 6px; color:#527a8f;"></i> 
+                create your account — private, secure & free
+            </div>
+
+            <!-- flash messages (matching style) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert {{ category }}">
+                        <i class="fas {% if category=='success' %}fa-check-circle{% else %}fa-exclamation-triangle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <!-- register form (small fonts, clean) -->
+            <form method="POST">
+                <div class="input-group">
+                    <input type="text" name="name" placeholder="full name" required>
+                </div>
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="email address" required>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="phone" placeholder="phone (optional)">
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" id="password" placeholder="create password (min. 8 chars)" required>
+                    <div class="password-strength">
+                        <div class="strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="strength-text" id="strengthText">enter a password</div>
+                </div>
+                <button type="submit" class="register-btn">
+                    <i class="fas fa-leaf"></i> join Mind Ease
+                </button>
+            </form>
+
+            <div class="login-link">
+                <span>already have an account?</span> <a href="/login">sign in</a>
+            </div>
+
+            <div class="form-footer">
+                <i class="fas fa-lock" style="opacity: 0.7;"></i> 
+                <span>end-to-end encrypted · HIPAA compliant</span>
+            </div>
+
+            <!-- model accuracy badge -->
+            <div class="accuracy-badge">
+                <i class="fas fa-robot"></i> emotion detection: 87.5% accuracy
+                <i class="fas fa-chart-line"></i>
+            </div>
+        </div>
+
+        <!-- RIGHT side: mental health imagery, quotes, calm illustrations -->
+        <div class="visual-panel">
+            <!-- peaceful mental health icons (like images) -->
+            <div class="mind-icon">
+                <i class="fas fa-heart"></i>
+                <i class="fas fa-brain" style="margin-left: -5px;"></i>
+            </div>
+
+            <div class="peace-quote">
+                <i class="fas fa-quote-left" style="font-size:0.9rem;"></i> 
+                Your mind matters.  
+                <i class="fas fa-feather-alt"></i> <br>
+                <span style="font-size:0.9rem; font-weight:300;">We're here to listen, understand, and support.</span>
+            </div>
+
+            <!-- image-like row (abstract illustrations via font icons) -->
+            <div class="image-row">
+                <div class="icon-bubble"><i class="fas fa-seedling"></i></div>
+                <div class="icon-bubble"><i class="fas fa-cloud-sun"></i></div>
+                <div class="icon-bubble"><i class="fas fa-hand-holding-heart"></i></div>
+            </div>
+
+            <!-- small supportive text (like an image caption) -->
+            <div class="support-note">
+                <i class="fas fa-circle" style="color: #7fadc7; font-size: 0.4rem;"></i> 
+                weighted emotion tracking · coping tools · mood insights
+                <i class="fas fa-circle" style="color: #7fadc7; font-size: 0.4rem;"></i> 
+            </div>
+
+            <!-- extra calm element: waves / feather -->
+            <div style="margin-top: 1.2rem; opacity:0.5; display:flex; gap:0.2rem; font-size:1.2rem; color:#466983;">
+                <i class="fas fa-water"></i><i class="fas fa-feather-alt"></i><i class="fas fa-wind"></i>
+            </div>
+
+            <!-- tiny footer note inside right panel (professional) -->
+            <div style="font-size:0.7rem; margin-top:1.5rem; color:#2b5e7e; background: rgba(255,255,240,0.4); padding:0.2rem 1.2rem; border-radius:30px;">
+                <i class="far fa-smile"></i> Mind Ease · AI-Powered Mental Health Support
+            </div>
+        </div>
+    </div>
+
+    <!-- password strength indicator script -->
+    <script>
+        document.getElementById('password').addEventListener('input', function(e) {
+            const password = e.target.value;
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthText = document.getElementById('strengthText');
+            
+            let strength = 0;
+            
+            if (password.length >= 8) strength += 25;
+            if (password.match(/[a-z]+/)) strength += 25;
+            if (password.match(/[A-Z]+/)) strength += 25;
+            if (password.match(/[0-9]+/)) strength += 25;
+            
+            strengthBar.style.width = strength + '%';
+            
+            if (strength < 25) {
+                strengthBar.style.background = '#f44336';
+                strengthText.textContent = 'weak password';
+            } else if (strength < 50) {
+                strengthBar.style.background = '#ff9800';
+                strengthText.textContent = 'fair password';
+            } else if (strength < 75) {
+                strengthBar.style.background = '#2196f3';
+                strengthText.textContent = 'good password';
+            } else {
+                strengthBar.style.background = '#4caf50';
+                strengthText.textContent = 'strong password';
+            }
+        });
+    </script>
+</body>
+</html>

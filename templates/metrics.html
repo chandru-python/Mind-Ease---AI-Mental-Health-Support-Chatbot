@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Model Performance Metrics</title>
+
+<style>
+
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#eef7f1;
+    margin:0;
+    padding:0;
+}
+
+/* HEADER */
+
+.header{
+    text-align:center;
+    padding:30px;
+    background:#1b5e20;
+    color:white;
+    position:relative;
+}
+
+/* BACK BUTTON */
+
+.back-btn{
+    position:absolute;
+    left:20px;
+    top:30px;
+    background:white;
+    color:#1b5e20;
+    border:none;
+    padding:10px 18px;
+    border-radius:6px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.back-btn:hover{
+    background:#c8e6c9;
+}
+
+/* GRID CONTAINER */
+
+.container{
+    width:90%;
+    margin:auto;
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(400px,1fr));
+    gap:30px;
+}
+
+/* CARD DESIGN */
+
+.card{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    padding:20px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 12px 25px rgba(0,0,0,0.15);
+}
+
+.card h2{
+    margin-bottom:15px;
+    color:#1b5e20;
+}
+
+/* IMAGE STYLE */
+
+.card img{
+    width:100%;
+    border-radius:10px;
+    border:1px solid #e0e0e0;
+}
+
+/* FOOTER */
+
+.footer{
+    text-align:center;
+    margin-top:40px;
+    padding:20px;
+    background:#1b5e20;
+    color:white;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+<button class="back-btn" onclick="history.back()">← Back</button>
+
+<h1>Deep Learning Model Performance</h1>
+<p>Emotion Detection Chatbot Evaluation Metrics</p>
+
+</div>
+
+<div class="container">
+
+<div class="card">
+<h2>Accuracy Graph</h2>
+<img src="{{ url_for('static', filename='accuracy.png') }}">
+</div>
+
+<div class="card">
+<h2>Loss Graph</h2>
+<img src="{{ url_for('static', filename='loss.png') }}">
+</div>
+
+<div class="card">
+<h2>Precision / Recall / F1 Metrics</h2>
+<img src="{{ url_for('static', filename='metrics.png') }}">
+</div>
+
+<div class="card">
+<h2>ROC Curve</h2>
+<img src="{{ url_for('static', filename='roc.png') }}">
+</div>
+
+</div>
+
+<div class="footer">
+<p>Mind Ease · AI Mental Health Support</p>
+</div>
+
+</body>
+
+</html>

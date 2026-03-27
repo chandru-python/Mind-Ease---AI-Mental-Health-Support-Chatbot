@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About · LSTM Mental Health Chatbot</title>
+    <!-- Font Awesome 6 (free) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #f4f9fd;
+            color: #1e2f3e;
+            font-size: 14px;               /* professional small base */
+            line-height: 1.6;
+            padding: 2rem 1.5rem;
+        }
+
+        .page-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 45px -18px rgba(30, 60, 80, 0.25);
+            overflow: hidden;
+            border: 1px solid #d9e9f2;
+        }
+
+        /* header / navbar area */
+        .about-header {
+            background: #ffffff;
+            padding: 1.2rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e2eef8;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo-icon {
+            background: #e3f0ed;
+            width: 42px;
+            height: 42px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2b6e4f;
+            font-size: 1.7rem;
+        }
+
+        .logo-text {
+            font-weight: 650;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+            color: #173e56;
+        }
+
+        .home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #ecf5fa;
+            padding: 0.6rem 1.5rem 0.6rem 1.2rem;
+            border-radius: 40px;
+            text-decoration: none;
+            color: #1f4f6e;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid #cde0ec;
+            transition: 0.2s;
+        }
+
+        .home-button i {
+            color: #2b6e4f;
+            font-size: 1rem;
+        }
+
+        .home-button:hover {
+            background: #dcecf9;
+            border-color: #9fc0d8;
+        }
+
+        /* main content */
+        .content {
+            padding: 2.8rem 3rem;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 650;
+            letter-spacing: -0.02em;
+            color: #103247;
+            margin-bottom: 1.2rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: #3b647d;
+            max-width: 750px;
+            margin-bottom: 3rem;
+            border-left: 5px solid #8fc5e0;
+            padding-left: 1.5rem;
+            background: #f0f8fe;
+            border-radius: 0 20px 20px 0;
+            padding: 1rem 1.8rem;
+        }
+
+        /* tech grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0 2.5rem;
+        }
+
+        .tech-card {
+            background: #f9fcff;
+            border-radius: 1.8rem;
+            padding: 2rem 1.8rem;
+            border: 1px solid #d9e7f2;
+            transition: 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .tech-card:hover {
+            border-color: #aad0e8;
+            box-shadow: 0 12px 24px -12px rgba(40, 110, 150, 0.2);
+        }
+
+        .tech-icon {
+            font-size: 2.3rem;
+            color: #2b6e4f;
+            margin-bottom: 1.2rem;
+            background: #e3f1eb;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tech-card h3 {
+            font-size: 1.35rem;
+            font-weight: 650;
+            color: #123f58;
+            margin-bottom: 0.8rem;
+        }
+
+        .tech-card p {
+            color: #375f79;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .badge {
+            background: #dff0f9;
+            color: #1a5777;
+            padding: 0.2rem 1rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid #b7d5ec;
+        }
+
+        /* feature list (mood, etc) */
+        .feature-highlight {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2.5rem;
+            background: #f1f7fb;
+            border-radius: 2.5rem;
+            padding: 2.5rem 2.8rem;
+            margin: 2.8rem 0 2rem;
+            border: 1px solid #d1e2ef;
+        }
+
+        .feature-item {
+            flex: 1 1 200px;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .feature-item i {
+            font-size: 2rem;
+            color: #2b6e4f;
+            background: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 12px rgba(60, 120, 100, 0.1);
+        }
+
+        .feature-text h4 {
+            font-size: 1.1rem;
+            font-weight: 650;
+            color: #15455f;
+        }
+
+        .feature-text p {
+            font-size: 0.85rem;
+            color: #466c84;
+        }
+
+        /* how it works – technical but clear */
+        .workflow {
+            margin: 3rem 0 2rem;
+        }
+
+        .workflow h2 {
+            font-size: 1.8rem;
+            font-weight: 650;
+            color: #0e3347;
+            margin-bottom: 1.5rem;
+        }
+
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+        }
+
+        .step {
+            flex: 1 1 150px;
+            background: white;
+            padding: 1.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid #b9d6ec;
+            text-align: center;
+            background: #fdfeff;
+        }
+
+        .step .step-num {
+            background: #2b6e4f;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .step p {
+            font-size: 0.9rem;
+            color: #1e4b66;
+        }
+
+        .step strong {
+            color: #103f58;
+        }
+
+        /* model summary (like from training) */
+        .model-note {
+            background: #1f3040;
+            color: #eaf1f8;
+            border-radius: 2rem;
+            padding: 1.8rem 2.5rem;
+            margin: 2.8rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .model-note i {
+            font-size: 2.8rem;
+            color: #9fc5de;
+        }
+
+        .model-note p {
+            font-size: 0.95rem;
+            opacity: 0.95;
+            max-width: 700px;
+        }
+
+        .model-note .mono {
+            font-family: monospace;
+            background: #2a4055;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            color: #c6e2ff;
+        }
+
+        /* footer */
+        .about-footer {
+            border-top: 1px solid #d5e5f0;
+            padding: 1.5rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #598197;
+            font-size: 0.8rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            background: #f9fdff;
+        }
+
+        .footer-links a {
+            color: #1f6182;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            border-bottom: 1px dotted #aac4d8;
+        }
+
+        .footer-links a:hover {
+            color: #15455f;
+        }
+
+        @media (max-width: 700px) {
+            .content { padding: 2rem 1.5rem; }
+            .about-header { padding: 1rem 1.5rem; }
+            .feature-highlight { padding: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper">
+        <!-- header with home button -->
+        <div class="about-header">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-brain"></i></div>
+                <span class="logo-text">mindLSTM</span>
+            </div>
+            <a href="/" class="home-button"><i class="fas fa-home"></i> home</a>
+        </div>
+
+        <!-- main about content -->
+        <div class="content">
+            <h1>About the mental health chatbot</h1>
+            <div class="subtitle">
+                <i class="fas fa-quote-left" style="margin-right: 8px; color:#3b7a9e;"></i>
+                An empathetic AI companion built with LSTM, NLP, and mood tracking — designed for supportive conversation.
+            </div>
+
+            <!-- technology cards: LSTM + NLP + mood -->
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-network-wired"></i></div>
+                    <h3>LSTM deep learning</h3>
+                    <p>Bidirectional LSTM layers (64 units) with attention-like pooling. Trained on emotional text data to capture context and sequence.</p>
+                    <span class="badge">val accuracy ~88%</span>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-language"></i></div>
+                    <h3>NLP pipeline</h3>
+                    <p>Tokenizer (10k words) + padding + TF‑IDF vectorizer for response retrieval. Cleaning: lower case, punctuation removal.</p>
+                    <span class="badge">spaCy inspired</span>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>mood tracking</h3>
+                    <p>Every interaction logs emotion (joy, sadness, anger, etc.). Weekly/monthly trends visualized in your private dashboard.</p>
+                    <span class="badge">privacy first</span>
+                </div>
+            </div>
+
+            <!-- mood & coping feature highlight (similar to index) -->
+            <div class="feature-highlight">
+                <div class="feature-item">
+                    <i class="fas fa-heartbeat"></i>
+                    <div class="feature-text">
+                        <h4>emotion detection</h4>
+                        <p>7 emotion classes – LSTM confidence + threshold</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-leaf"></i>
+                    <div class="feature-text">
+                        <h4>coping suggestions</h4>
+                        <p>context‑aware responses via cosine similarity</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <div class="feature-text">
+                        <h4>mood dashboard</h4>
+                        <p>track weekly patterns, export insights</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- how it works – technical but friendly -->
+            <div class="workflow">
+                <h2><i class="fas fa-cogs" style="color:#2b6e4f; margin-right: 10px;"></i> from message to support</h2>
+                <div class="steps">
+                    <div class="step"><span class="step-num">1</span> <p><strong>clean & tokenize</strong><br>re.sub, pad_sequences</p></div>
+                    <div class="step"><span class="step-num">2</span> <p><strong>LSTM emotion</strong><br>bidirectional + pooling</p></div>
+                    <div class="step"><span class="step-num">3</span> <p><strong>emotion class</strong><br>softmax (sad, happy, ...)</p></div>
+                    <div class="step"><span class="step-num">4</span> <p><strong>retrieve response</strong><br>TF‑IDF + cosine sim</p></div>
+                    <div class="step"><span class="step-num">5</span> <p><strong>mood stored</strong><br>for dashboard</p></div>
+                </div>
+            </div>
+
+            <!-- small model card (like from training) -->
+            <div class="model-note">
+                <i class="fas fa-microchip"></i>
+                <p><span class="mono">emotion_model.keras</span> — bidirectional LSTM (64) · embedding 128 · dropout 0.5 · 25 epochs · trained on <strong>~12k</strong> cleaned samples.  <br> 
+                <i class="fas fa-database" style="margin-right: 4px;"></i> tokenizer.pkl + label_encoder.pkl + TF‑IDF matrix (response retrieval).</p>
+            </div>
+
+            <!-- about the project / team small -->
+            <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: space-between; border-top: 1px dashed #cae0ec; padding-top: 2rem; margin-top: 1rem;">
+                <div style="max-width: 500px;">
+                    <h3 style="font-size: 1.3rem; color: #1a4d6b;"><i class="fas fa-hand-holding-heart" style="color:#2b6e4f;"></i> why we built this</h3>
+                    <p style="color: #366277;">To offer a private, intelligent space where people can express emotions and receive gentle, evidence‑informed support. The LSTM model captures sequential language nuances, while the mood dashboard helps users recognise patterns.</p>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.3rem; color: #1a4d6b;"><i class="fas fa-users"></i> team</h3>
+                    <p style="color: #366277;">AI research · clinical psychology · open source</p>
+                    <p style="font-size:0.8rem; color:#59889c;">v2.6 · continuous improvement</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- footer with links (about page) -->
+        <div class="about-footer">
+            <div>© 2026 mindLSTM — mental health chatbot</div>
+            <div class="footer-links">
+              
+            </div>
+        </div>
+    </div>
+</body>
+</html>
